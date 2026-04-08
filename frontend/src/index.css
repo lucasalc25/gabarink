@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+:root {
+  --color-canvas: #0f111a;
+  --color-surface-dark: #181a25;
+  --color-surface-darker: #13151f;
+
+  --color-primary-base: #9333ea;
+  --color-primary-light: #a855f7;
+  --color-primary-dark: #7e22ce;
+
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --color-muted: #6b7280;
+  --color-text-white: #f8fafc;
+  --color-text-dim: #94a3b8;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-surface-muted: rgba(255, 255, 255, 0.05);
+}
+
+.light {
+  --color-canvas: #f1f5f9;
+  --color-surface-dark: #ffffff;
+  --color-surface-darker: #e2e8f0;
+
+  --color-text-white: #0f172a;
+  --color-text-dim: #475569;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-surface-muted: rgba(0, 0, 0, 0.05);
+
+  color-scheme: light;
+}
+
+.light .hero-dark-force {
+  --color-canvas: #0f111a;
+  --color-surface-dark: #181a25;
+  --color-surface-darker: #13151f;
+  --color-text-white: #f8fafc;
+  --color-text-dim: #94a3b8;
+  color-scheme: dark;
+}
+
+@theme {
+  --color-canvas: var(--color-canvas);
+  --color-surface-dark: var(--color-surface-dark);
+  --color-surface-darker: var(--color-surface-darker);
+
+  --color-primary-base: var(--color-primary-base);
+  --color-primary-light: var(--color-primary-light);
+  --color-primary-dark: var(--color-primary-dark);
+
+  --color-success: var(--color-success);
+  --color-error: var(--color-error);
+  --color-muted: var(--color-muted);
+  --color-text-white: var(--color-text-white);
+  --color-text-dim: var(--color-text-dim);
+  --color-border: var(--color-border);
+  --color-surface-muted: var(--color-surface-muted);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    @apply bg-[var(--color-canvas)] text-[var(--color-text-white)] antialiased min-h-screen selection:bg-[var(--color-primary-base)] selection:text-white font-sans;
+  }
+}
+
+@layer utilities {
+  .bg-gradient-primary {
+    @apply bg-gradient-to-r from-[var(--color-primary-base)] to-[var(--color-primary-light)];
+  }
+
+  .bg-gradient-surface {
+    @apply bg-gradient-to-b from-[var(--color-surface-dark)] to-[var(--color-surface-darker)];
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
