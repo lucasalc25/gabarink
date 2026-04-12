@@ -55,10 +55,7 @@ export default function Login() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center p-4 bg-canvas font-sans overflow-hidden">
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary-base/10 blur-[120px] rounded-full animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary-dark/10 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
-
+    <div className="flex flex-col items-center justify-center p-4 font-sans">
       <div className="absolute top-6 w-full max-w-[420px] px-4 flex justify-center z-50">
         {generalError && (
           <div className="flex w-full items-center gap-2 p-4 bg-error/10 border border-error/20 text-error rounded-2xl text-sm font-semibold shadow-xl backdrop-blur-md animate-in slide-in-from-top-4 duration-300">
@@ -70,11 +67,7 @@ export default function Login() {
 
       <div className="flex flex-col items-center space-y-6 mb-10 z-10">
         <Link to="/" className="flex flex-col items-center group">
-          <div className="flex items-center justify-center w-16 h-16 rounded-[24px] bg-gradient-primary shadow-[0_8px_30px_rgba(147,51,234,0.4)] group-hover:scale-110 transition-all duration-500 ring-4 ring-primary-base/10">
-            <Zap className="w-8 h-8 text-white fill-white/20" />
-          </div>
-          <h1 className="mt-6 text-4xl font-black text-text-white tracking-tight">Quizzy</h1>
-          <p className="mt-2 text-text-dim text-lg font-medium opacity-80">Bem-vindo de volta ao desafio</p>
+          <h2 className="mt-6 text-4xl font-medium text-text-white tracking-tight">Seja bem-vindo(a)</h2>
         </Link>
       </div>
 
@@ -98,10 +91,7 @@ export default function Login() {
             </div>
 
             <div className="space-y-2">
-              <div className="flex justify-between items-center px-1">
-                <label className="text-sm font-bold text-text-white/70">Senha</label>
-                <button type="button" className="text-xs font-bold text-primary-light">Esqueceu a senha?</button>
-              </div>
+              <label className="text-sm font-bold text-text-white/70">Senha</label>
               <Input
                 type="password"
                 placeholder="No mínimo 8 caracteres"
@@ -113,6 +103,8 @@ export default function Login() {
                 )}
               />
               {passwordError && <p className="text-error text-xs mt-1.5 ml-1">{passwordError}</p>}
+
+
             </div>
 
             <Button
@@ -123,6 +115,8 @@ export default function Login() {
               {isLoading ? 'Entrando...' : 'Entrar'}
             </Button>
           </form>
+
+          <button type="button" className="text-xs font-bold text-primary-light">Esqueceu a senha?</button>
 
           <p className="mt-10 text-center text-sm font-bold text-text-dim">
             Não tem uma conta?{' '}

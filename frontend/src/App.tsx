@@ -16,6 +16,14 @@ import Register from './pages/Register';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import VisitorHome from './pages/VisitorHome';
+import { useAuth } from './contexts/AuthContext';
+
+function IndexPage() {
+  const { isLogged, loading } = useAuth();
+  if (loading) return null;
+  return isLogged ? <Home /> : <VisitorHome />;
+}
 
 export default function App() {
   return (
@@ -24,7 +32,7 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             <Route element={<RootLayout />}>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<IndexPage />} />
               <Route path="/ranking" element={<Ranking />} />
               <Route path="/quiz/:id" element={<QuizDetails />} />
               

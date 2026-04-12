@@ -1,5 +1,6 @@
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Bell, Moon, Sun, Menu, Home, Trophy, LayoutTemplate, Plus, User, FolderClosed, Globe, LogOut, ChevronRight, Check, X } from 'lucide-react';
+import logoImage from '@/assets/logo.png';
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -61,7 +62,7 @@ export default function Header() {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('theme');
       if (saved) return saved === 'dark';
-      return !document.documentElement.classList.contains('light');
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
     return true;
   });
@@ -143,13 +144,16 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-surface-dark/85 backdrop-blur-xl shadow-lg transition-all duration-300">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 relative">
-        <Link to="/" className="flex items-center gap-2 shrink-0 group">
-          <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-primary group-hover:opacity-80 transition-all">
-            Quizzy
+        <Link to="/" className="flex items-center shrink-0 group">
+          <div className="w-9 h-9 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+            <img src={logoImage} alt="Logo" className="w-8 h-8 object-contain" />
+          </div>
+          <span className="text-2xl font-black bg-clip-text text-transparent bg-gradient-primary group-hover:opacity-80 transition-all tracking-tight">
+            Gabarink
           </span>
         </Link>
 
-        {!isAuthPage && (
+        {effectivelyLogged && !isAuthPage && (
           <nav className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-8 text-sm font-semibold">
             <NavLink to="/" className={({ isActive }) => cn("relative flex items-center gap-1.5 transition-all hover:text-primary-light", isActive ? "text-primary-light after:content-[''] after:absolute after:-bottom-[22px] after:left-0 after:w-full after:h-[2px] after:bg-primary-base after:rounded-full after:shadow-[0_0_8px_rgba(147,51,234,0.4)]" : "text-text-white/70")}>
               <Home size={18} strokeWidth={2.5} />
@@ -168,10 +172,12 @@ export default function Header() {
 
         <div className="hidden md:flex items-center gap-4">
           {/* Always show Create Quiz button, actions gate it */}
-          <Link to="/create" className="flex items-center gap-1.5 bg-gradient-primary text-white px-5 py-1.5 rounded-xl text-sm font-bold hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:scale-[1.05] transition-all active:scale-95">
-            <Plus size={18} strokeWidth={3} />
-            {t('create')}
-          </Link>
+          {effectivelyLogged && (
+            <Link to="/create" className="flex items-center gap-1.5 bg-gradient-primary text-white px-5 py-1.5 rounded-xl text-sm font-bold hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:scale-[1.05] transition-all active:scale-95">
+              <Plus size={18} strokeWidth={3} />
+              {t('create')}
+            </Link>
+          )}
 
           {effectivelyLogged ? (
             <>
@@ -275,8 +281,10 @@ export default function Header() {
                 {isDark ? <Sun size={20} strokeWidth={2} /> : <Moon size={20} strokeWidth={2} />}
               </button>
               <nav className="flex items-center gap-4 ml-2">
-                <Link to="/login" className="text-sm font-semibold text-text-white/90 hover:text-white transition-colors">{t('login')}</Link>
-                <Link to="/register" className="bg-gradient-primary text-white px-6 py-2 rounded-xl text-sm font-bold shadow-lg shadow-primary-base/20 hover:scale-[1.05] transition-all active:scale-95">{t('register')}</Link>
+                <Link to="/login" className="px-4 py-2 text-sm font-bold text-text-white/70 hover:text-white transition-all rounded-xl hover:bg-white/5 active:scale-95">{t('login')}</Link>
+                <Link to="/register" className="bg-primary-base text-white px-6 py-2 rounded-xl text-sm font-black shadow-lg shadow-primary-base/25 hover:brightness-110 hover:scale-[1.05] transition-all active:scale-95 hover:shadow-primary-base/40">
+                  {t('register')}
+                </Link>
               </nav>
             </div>
           )}
@@ -335,23 +343,27 @@ export default function Header() {
             className="absolute top-full left-0 w-full bg-surface-dark border-b border-white/5 z-[100] animate-in slide-in-from-top-4 duration-300 shadow-2xl flex flex-col px-6 py-8"
           >
             <nav className="flex flex-col gap-1.5 max-h-[75vh] overflow-y-auto">
-              <NavLink to="/" onClick={() => setIsMobileMenuOpen(false)} className={({ isActive }) => cn("flex items-center gap-4 px-5 py-3.5 text-[15px] font-bold transition-all rounded-2xl", isActive ? "bg-primary-base/15 text-primary-light" : "text-text-white/60 active:bg-white/5")}>
-                <Home size={20} /> {t('home')}
-              </NavLink>
-              <NavLink to="/ranking" onClick={() => setIsMobileMenuOpen(false)} className={({ isActive }) => cn("flex items-center gap-4 px-5 py-3.5 text-[15px] font-bold transition-all rounded-2xl", isActive ? "bg-primary-base/15 text-primary-light" : "text-text-white/60 active:bg-white/5")}>
-                <Trophy size={20} /> {t('ranking')}
-              </NavLink>
-              <NavLink to="/templates" onClick={() => setIsMobileMenuOpen(false)} className={({ isActive }) => cn("flex items-center gap-4 px-5 py-3.5 text-[15px] font-bold transition-all rounded-2xl", isActive ? "bg-primary-base/15 text-primary-light" : "text-text-white/60 active:bg-white/5")}>
-                <LayoutTemplate size={20} /> {t('templates')}
-              </NavLink>
+              {effectivelyLogged && (
+                <>
+                  <NavLink to="/" onClick={() => setIsMobileMenuOpen(false)} className={({ isActive }) => cn("flex items-center gap-4 px-5 py-3.5 text-[15px] font-bold transition-all rounded-2xl", isActive ? "bg-primary-base/15 text-primary-light" : "text-text-white/60 active:bg-white/5")}>
+                    <Home size={20} /> {t('home')}
+                  </NavLink>
+                  <NavLink to="/ranking" onClick={() => setIsMobileMenuOpen(false)} className={({ isActive }) => cn("flex items-center gap-4 px-5 py-3.5 text-[15px] font-bold transition-all rounded-2xl", isActive ? "bg-primary-base/15 text-primary-light" : "text-text-white/60 active:bg-white/5")}>
+                    <Trophy size={20} /> {t('ranking')}
+                  </NavLink>
+                  <NavLink to="/templates" onClick={() => setIsMobileMenuOpen(false)} className={({ isActive }) => cn("flex items-center gap-4 px-5 py-3.5 text-[15px] font-bold transition-all rounded-2xl", isActive ? "bg-primary-base/15 text-primary-light" : "text-text-white/60 active:bg-white/5")}>
+                    <LayoutTemplate size={20} /> {t('templates')}
+                  </NavLink>
 
-              <div className="h-px bg-white/5 my-2" />
+                  <div className="h-px bg-white/5 my-2" />
 
-              <Link to="/create" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-4 w-full bg-primary-base text-white px-5 py-4 rounded-[20px] text-[15px] font-bold shadow-lg shadow-primary-base/20 active:scale-[0.98] transition-all hover:brightness-110 mb-2">
-                <Plus size={22} strokeWidth={3} className="shrink-0" /> {t('create')}
-              </Link>
+                  <Link to="/create" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-4 w-full bg-primary-base text-white px-5 py-4 rounded-[20px] text-[15px] font-bold shadow-lg shadow-primary-base/20 active:scale-[0.98] transition-all hover:brightness-110 mb-2">
+                    <Plus size={22} strokeWidth={3} className="shrink-0" /> {t('create')}
+                  </Link>
 
-              <div className="h-px bg-white/5 my-2" />
+                  <div className="h-px bg-white/5 my-2" />
+                </>
+              )}
 
               {effectivelyLogged ? (
                 <>

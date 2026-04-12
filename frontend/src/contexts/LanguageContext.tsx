@@ -85,6 +85,14 @@ const translations: Translations = {
   t5_desc: { pt: 'O modelo perfeito para seu próximo encontro com amigos. Tópicos mistos com perguntas rápidas.', en: 'The perfect template for your next friend gathering. Mixed topics with fun and quick questions.', es: 'La plantilla perfecta para tu próxima reunión de amigos.' },
   t6_title: { pt: 'Básico de Biologia Moderna', en: 'Modern Biology Basics', es: 'Conceptos Básicos de Biología Moderna' },
   t6_desc: { pt: 'Foque em células, DNA e os blocos de construção da vida com este modelo cientificamente preciso.', en: 'Focus on cells, DNA, and the building blocks of life with this scientifically accurate template.', es: 'Enfócate en las células, el ADN y los componentes básicos de la vida.' },
+  // Visitor Home
+  visitorHeroTitle: { pt: 'O que vamos conquistar hoje?', en: 'What shall we conquer today?', es: '¿Qué vamos a conquistar hoy?' },
+  areaLinguagens: { pt: 'Linguagens', en: 'Languages', es: 'Lenguajes' },
+  areaHumanas: { pt: 'Ciências Humanas', en: 'Human Sciences', es: 'Ciencias Humanas' },
+  areaNatureza: { pt: 'Ciências da Natureza', en: 'Natural Sciences', es: 'Ciencias de la Naturaleza' },
+  areaMatematica: { pt: 'Matemática', en: 'Mathematics', es: 'Matemáticas' },
+  xpBubble: { pt: '+500 XP atingidos!', en: '+500 XP reached!', es: '¡+500 XP alcanzados!' },
+  inkBar: { pt: 'Tinta: 85%', en: 'Ink: 85%', es: 'Tinta: 85%' },
 };
 
 interface LanguageContextType {
