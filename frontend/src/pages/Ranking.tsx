@@ -1,140 +1,123 @@
-import { useEffect, useState } from 'react';
-import { api } from '@/services/api';
-import type { User } from '@/types';
-import { Trophy, Crown } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useEffect, useState } from "react";
+import { AppLayout } from "@/components/AppLayout";
+import { rankingService } from "@/services/rankingService";
+import type { RankingEntry } from "@/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Crown, Medal } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
-type RankEntry = { rank: number; user: User; score: number };
+const Ranking = () => {
+  const [entries, setEntries] = useState<RankingEntry[]>([]);
+  useEffect(() => { rankingService.global().then(setEntries); }, []);
 
-export default function Ranking() {
-  const { t } = useLanguage();
-  const [ranking, setRanking] = useState<RankEntry[]>([]);
-  const [period, setPeriod] = useState<'weekly' | 'all-time'>('weekly');
-
-  useEffect(() => {
-    api.getRanking().then(setRanking);
-  }, [period]);
-
-  const top3 = ranking.slice(0, 3);
-  const rest = ranking.slice(3);
-
-  // Reorder for podium: 2nd, 1st, 3rd visually
-  const podium = [
-    top3.find(r => r.rank === 2),
-    top3.find(r => r.rank === 1),
-    top3.find(r => r.rank === 3),
-  ].filter(Boolean) as RankEntry[];
+  const top3 = entries.slice(0, 3);
+  const rest = entries.slice(3);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl space-y-12">
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl font-extrabold flex items-center justify-center gap-3">
-          <Trophy className="text-yellow-500 h-10 w-10" /> {t('rankingTitle')}
-        </h1>
-        <p className="text-text-dim">{t('rankingSub')}</p>
-
-        <div className="inline-flex bg-surface-dark border border-white/10 rounded-xl p-1 mt-4">
-          <button
-            onClick={() => setPeriod('weekly')}
-            className={cn(
-              "px-6 py-2 rounded-lg text-sm font-medium transition-all transform active:scale-95",
-              period === 'weekly' ? "bg-primary-base text-white shadow-lg shadow-primary-base/20" : "text-text-dim hover:text-text-white"
-            )}
-          >
-            {t('weekly')}
-          </button>
-          <button
-            onClick={() => setPeriod('all-time')}
-            className={cn(
-              "px-6 py-2 rounded-lg text-sm font-medium transition-all transform active:scale-95",
-              period === 'all-time' ? "bg-primary-base text-white shadow-lg shadow-primary-base/20" : "text-text-dim hover:text-text-white"
-            )}
-          >
-            {t('allTime')}
-          </button>
+    <AppLayout>
+      <div className="max-w-[720px] mx-auto w-full">
+        <div className="mb-6">
+          <h1 className="font-display text-3xl md:text-4xl font-black">Ranking</h1>
+          <p className="text-muted-foreground">Os mais consistentes vão ao topo.</p>
         </div>
+
+        <Tabs defaultValue="global" className="w-full">
+          <TabsList className="glass mb-6">
+            <TabsTrigger value="global">Global</TabsTrigger>
+            <TabsTrigger value="weekly">Semanal</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="global">
+            <Podium top3={top3} />
+            <RankList entries={rest} />
+          </TabsContent>
+          <TabsContent value="weekly">
+            <Podium top3={top3} />
+            <RankList entries={rest} />
+          </TabsContent>
+        </Tabs>
       </div>
+    </AppLayout>
+  );
+};
 
-      {ranking.length > 0 && (
-        <div className="flex justify-center items-end gap-2 sm:gap-6 pt-10 pb-0">
-          {podium.map((entry) => {
-            const isFirst = entry.rank === 1;
-            return (
-              <div key={entry.user.id} className={cn(
-                "flex flex-col items-center relative",
-                isFirst ? "w-1/3 mb-4 sm:mb-0" : "w-1/4 sm:w-[28%]"
-              )}>
-                {isFirst && <Crown className="absolute -top-12 sm:-top-14 h-10 w-10 sm:h-12 sm:w-12 text-yellow-500 animate-bounce" />}
+const podiumStyle = (pos: number) => {
+  if (pos === 1) return { height: "h-40 md:h-48", grad: "from-warning to-accent", ring: "ring-warning/60", icon: "text-warning", label: "1º" };
+  if (pos === 2) return { height: "h-32 md:h-36", grad: "from-muted-foreground to-secondary", ring: "ring-muted-foreground/40", icon: "text-muted-foreground", label: "2º" };
+  return { height: "h-24 md:h-28", grad: "from-accent to-primary", ring: "ring-accent/40", icon: "text-accent", label: "3º" };
+};
 
-                <div className={cn(
-                  "relative rounded-full border-4 overflow-hidden mb-4 z-10 bg-surface-dark transition-transform hover:scale-105",
-                  entry.rank === 1 ? "h-24 w-24 sm:h-32 sm:w-32 border-yellow-500" :
-                    entry.rank === 2 ? "h-20 w-20 sm:h-24 sm:w-24 border-zinc-400" :
-                      "h-20 w-20 sm:h-24 sm:w-24 border-amber-600"
-                )}>
-                  <img src={entry.user.avatarUrl} alt={entry.user.name} className="h-full w-full object-cover" />
-                </div>
-
-                <div className={cn(
-                  "w-full rounded-t-2xl flex flex-col items-center pt-8 sm:pt-6 pb-6 bg-gradient-surface border border-white/5 border-b-0 relative",
-                  isFirst ? "h-44 sm:h-52 shadow-[0_-10px_30px_rgba(234,179,8,0.2)]" :
-                    entry.rank === 2 ? "h-[148px] sm:h-44 opacity-95" :
-                      "h-[138px] sm:h-42 opacity-90"
-                )}>
-                  <span className="font-bold text-[15px] sm:text-lg text-center truncate px-2 w-full leading-tight">{entry.user.name}</span>
-                  <span className="text-[12px] sm:text-sm font-medium text-primary-light mt-0.5 mb-auto">{entry.score.toLocaleString()} pts</span>
-
-                  {/* Indicator at the base */}
-                  <div className={cn(
-                    "mt-4 h-9 w-9 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center text-base sm:text-lg font-black shadow-lg border-2",
-                    entry.rank === 1 ? "bg-yellow-500 text-surface-dark border-yellow-400" :
-                      entry.rank === 2 ? "bg-zinc-400 text-surface-dark border-zinc-300" :
-                        "bg-amber-600 text-surface-dark border-amber-500"
-                  )}>
-                    {entry.rank}
-                  </div>
+const Podium = ({ top3 }: { top3: RankingEntry[] }) => {
+  if (top3.length < 3) return null;
+  const order = [top3[1], top3[0], top3[2]]; // 2, 1, 3
+  return (
+    <div className="p-4 md:p-8 mb-6">
+      <div className="absolute -top-10 left-1/2 -translate-x-1/2 h-40 w-72 rounded-full z-0" />
+      <div className="relative z-10 grid grid-cols-3 gap-3 md:gap-6 items-end">
+        {order.map((e) => {
+          const s = podiumStyle(e.position);
+          return (
+            <motion.div
+              key={e.user.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: e.position * 0.1 }}
+              className="flex flex-col items-center"
+            >
+              <div className="relative mb-2">
+                {e.position === 1 && <Crown className={cn("absolute -top-6 left-1/2 -translate-x-1/2 h-6 w-6", s.icon)} />}
+                <div className={cn("h-14 w-14 md:h-20 md:w-20 rounded-full bg-gradient-primary text-primary-foreground flex items-center justify-center font-display font-black text-xl md:text-3xl shadow-glow ring-4", s.ring)}>
+                  {e.user.username.charAt(0)}
                 </div>
               </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Standardized Ranking List */}
-      <div className="space-y-3 pt-2">
-        {rest.map((entry) => (
-          <div key={entry.user.id} className="flex items-center gap-3 p-3.5 bg-surface-dark border border-white/5 rounded-2xl transition-all hover:bg-white/[0.02]">
-            {/* Rank - Far Left (shrunk) */}
-            <div className="w-8 flex justify-center">
-              <span className="text-lg font-black text-text-white/40">{entry.rank}º</span>
-            </div>
-
-            {/* Avatar */}
-            <img
-              src={entry.user.avatarUrl}
-              className="h-11 w-11 rounded-xl object-cover border border-white/10"
-              alt="avatar"
-            />
-
-            {/* Central Info Block - Expanded to the right */}
-            <div className="flex-1 min-w-0 pr-1">
-              <p className="font-bold text-text-white text-[16px] truncate leading-tight">{entry.user.name}</p>
-              <div className="flex items-center gap-2 text-[11px] font-medium text-text-dim">
-                <span className="shrink-0">{entry.user.level} Quizzes</span>
-                <span className="w-0.5 h-0.5 rounded-full bg-white/10" />
-                <span className="truncate">{(entry.score / (entry.user.level || 1)).toFixed(0)} pts/avg</span>
+              <p className="font-display font-bold text-xs md:text-sm text-center truncate max-w-full px-1">{e.user.username.split(" ")[0]}</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mb-2">{e.points.toLocaleString("pt-BR")} pts</p>
+              <div className={cn("w-full rounded-t-2xl bg-gradient-to-b shadow-elevated flex items-center justify-center", s.height, s.grad)}>
+                <span className="font-display font-black text-2xl md:text-4xl text-primary-foreground drop-shadow">{s.label}</span>
               </div>
-            </div>
-
-            {/* Score - Far Right (Untouched position) */}
-            <div className="text-right flex flex-col items-end min-w-[70px]">
-              <span className="font-black text-lg text-text-white leading-none">{entry.score.toLocaleString()}</span>
-              <span className="text-[9px] font-black uppercase text-primary-light tracking-widest mt-1">PTS</span>
-            </div>
-          </div>
-        ))}
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );
-}
+};
+
+const RankList = ({ entries }: { entries: RankingEntry[] }) => (
+  <div className="glass-card overflow-hidden">
+    <div className="grid grid-cols-12 px-3 md:px-4 py-3 text-[10px] md:text-xs font-bold uppercase tracking-wide text-muted-foreground border-b border-border">
+      <div className="col-span-2">Pos</div>
+      <div className="col-span-5">Estudante</div>
+      <div className="col-span-2 text-center hidden sm:block">Liga</div>
+      <div className="col-span-1 text-right">%</div>
+      <div className="col-span-2 text-right">Pontos</div>
+    </div>
+    {entries.map((e) => (
+      <div
+        key={e.user.id}
+        className={cn(
+          "grid grid-cols-12 px-3 md:px-4 py-3 items-center border-b border-border/40 last:border-0 transition-colors text-sm",
+          e.isCurrentUser && "bg-primary/10 ring-1 ring-primary/30"
+        )}
+      >
+        <div className="col-span-2 flex items-center gap-1 md:gap-2">
+          {e.position === 2 && <Medal className="h-4 w-4 text-muted-foreground" />}
+          {e.position === 3 && <Medal className="h-4 w-4 text-accent" />}
+          <span className="font-display font-bold">{e.position}º</span>
+        </div>
+        <div className="col-span-5 sm:col-span-5 col-span-7 flex items-center gap-2 md:gap-3 min-w-0">
+          <div className="h-7 w-7 md:h-8 md:w-8 rounded-full bg-gradient-primary text-primary-foreground flex items-center justify-center font-display font-bold text-sm shrink-0">
+            {e.user.username.charAt(0)}
+          </div>
+          <span className="font-semibold truncate">{e.user.username}</span>
+        </div>
+        <div className="col-span-2 text-center text-xs font-semibold text-muted-foreground hidden sm:block">{e.user.league}</div>
+        <div className="col-span-1 text-right text-xs md:text-sm">{e.accuracy}%</div>
+        <div className="col-span-2 text-right font-display font-bold text-xs md:text-sm">{e.points.toLocaleString("pt-BR")}</div>
+      </div>
+    ))}
+  </div>
+);
+
+export default Ranking;

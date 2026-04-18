@@ -1,131 +1,64 @@
-import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Zap, AlertCircle } from 'lucide-react';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import { Link, useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils';
-import { useAuth } from '@/contexts/AuthContext';
-import AuthGuardPopup from '@/components/auth/AuthGuardPopup';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthLayout } from "@/components/AuthLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
 
-export default function Login() {
-  const { isLogged, login } = useAuth();
-  const navigate = useNavigate();
+const Login = () => {
+  const { login } = useAuth();
+  const nav = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  if (isLogged) return <AuthGuardPopup />;
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [generalError, setGeneralError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setEmailError('');
-    setPasswordError('');
-    setGeneralError('');
-
-    let hasError = false;
-    if (!email) {
-      setEmailError('Por favor, insira seu e-mail.');
-      hasError = true;
-    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-      setEmailError('E-mail inválido.');
-      hasError = true;
-    }
-
-    if (!password) {
-      setPasswordError('Por favor, insira sua senha.');
-      hasError = true;
-    }
-
-    if (hasError) return;
-
+    if (!email || !password) return toast.error("Preencha email e senha");
+    setLoading(true);
     try {
-      setIsLoading(true);
       await login(email, password);
-      navigate('/');
-    } catch (err: any) {
-      setGeneralError(err.message || 'Erro ao entrar. Verifique suas credenciais.');
+      toast.success("Bem-vindo de volta!");
+      nav("/home");
+    } catch {
+      toast.error("Falha ao entrar");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 font-sans">
-      <div className="absolute top-6 w-full max-w-[420px] px-4 flex justify-center z-50">
-        {generalError && (
-          <div className="flex w-full items-center gap-2 p-4 bg-error/10 border border-error/20 text-error rounded-2xl text-sm font-semibold shadow-xl backdrop-blur-md animate-in slide-in-from-top-4 duration-300">
-            <AlertCircle className="w-5 h-5 shrink-0" />
-            <p>{generalError}</p>
+    <AuthLayout title="Entrar na Gabarink" subtitle="Continue de onde parou.">
+      <form onSubmit={onSubmit} className="space-y-4">
+        <div>
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" />
+        </div>
+        <div>
+          <div className="flex justify-between items-center">
+            <Label htmlFor="password">Senha</Label>
+            <Link to="/forgot-password" className="text-xs text-primary hover:underline">Esqueci a senha</Link>
           </div>
-        )}
-      </div>
-
-      <div className="flex flex-col items-center space-y-6 mb-10 z-10">
-        <Link to="/" className="flex flex-col items-center group">
-          <h2 className="mt-6 text-4xl font-medium text-text-white tracking-tight">Seja bem-vindo(a)</h2>
-        </Link>
-      </div>
-
-      <Card className="w-full max-w-[420px] bg-surface-dark/40 backdrop-blur-2xl border-white/5 shadow-2xl rounded-[32px] overflow-hidden z-10">
-        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary-base/50 to-transparent" />
-        <CardContent className="p-10">
-          <form onSubmit={handleLogin} className="flex flex-col space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-text-white/70 ml-1">E-mail</label>
-              <Input
-                type="email"
-                placeholder="exemplo@gmail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading}
-                className={cn(
-                  "w-full bg-white/5 border-white/5 text-text-white h-13 px-5 rounded-2xl"
-                )}
-              />
-              {emailError && <p className="text-error text-xs mt-1.5 ml-1">{emailError}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-text-white/70">Senha</label>
-              <Input
-                type="password"
-                placeholder="No mínimo 8 caracteres"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
-                className={cn(
-                  "w-full bg-white/5 border-white/5 text-text-white h-13 px-5 rounded-2xl"
-                )}
-              />
-              {passwordError && <p className="text-error text-xs mt-1.5 ml-1">{passwordError}</p>}
-
-
-            </div>
-
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full h-14 bg-gradient-primary text-white font-black rounded-2xl text-base shadow-xl active:scale-95 transition-all"
-            >
-              {isLoading ? 'Entrando...' : 'Entrar'}
-            </Button>
-          </form>
-
-          <button type="button" className="text-xs font-bold text-primary-light">Esqueceu a senha?</button>
-
-          <p className="mt-10 text-center text-sm font-bold text-text-dim">
-            Não tem uma conta?{' '}
-            <Link to="/register" className="text-primary-light hover:text-text-white transition-all underline underline-offset-4">
-              Crie uma conta
-            </Link>
-          </p>
-        </CardContent>
-      </Card>
-    </div>
+          <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+        </div>
+        <Button type="submit" disabled={loading} className="w-full h-11 bg-gradient-primary text-primary-foreground hover:opacity-90 shadow-glow rounded-full">
+          {loading ? "Entrando..." : "Entrar"}
+        </Button>
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
+          <div className="relative flex justify-center text-xs"><span className="px-3 bg-background text-muted-foreground">ou continue com</span></div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Button type="button" variant="outline" className="rounded-full">Google</Button>
+          <Button type="button" variant="outline" className="rounded-full">Apple</Button>
+        </div>
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          Não tem conta? <Link to="/register" className="text-primary font-semibold hover:underline">Cadastre-se</Link>
+        </p>
+      </form>
+    </AuthLayout>
   );
-}
+};
+export default Login;

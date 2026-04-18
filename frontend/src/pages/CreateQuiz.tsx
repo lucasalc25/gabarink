@@ -1,180 +1,97 @@
-import { useState, useEffect } from 'react';
-import { api } from '@/services/api';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Sparkles, PenTool, LayoutTemplate, X, Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { AppLayout } from "@/components/AppLayout";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { quizService } from "@/services/quizService";
+import { Sparkles, Wand2, LayoutTemplate, PenTool } from "lucide-react";
+import { toast } from "sonner";
 
-export default function CreateQuiz() {
-  const navigate = useNavigate();
-  const { isLogged } = useAuth();
+const CreateQuiz = () => {
+  const nav = useNavigate();
+  const [manual, setManual] = useState({ title: "", description: "" });
+  const [aiTopic, setAiTopic] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!isLogged) {
-      navigate('/login');
-    }
-  }, [isLogged, navigate]);
-
-  const [method, setMethod] = useState<'MANUAL' | 'TEMPLATE' | 'AI'>('MANUAL');
-  const [isGenerating, setIsGenerating] = useState(false);
-  
-  // AI Form
-  const [aiTopic, setAiTopic] = useState('');
-  const [aiDifficulty, setAiDifficulty] = useState('Medium');
-  const [aiQuestions, setAiQuestions] = useState(10);
-  
-  // Manual Form
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  
-  const handleGenerateAI = async (e: React.FormEvent) => {
+  const onManual = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsGenerating(true);
-    try {
-      const quiz = await api.generateAIQuiz(aiTopic, aiDifficulty, aiQuestions);
-      // Auto-fill manual form with generated data to allow editing
-      setTitle(quiz.title);
-      setDescription(`AI generated quiz about ${aiTopic}`);
-      setMethod('MANUAL');
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsGenerating(false);
-    }
+    if (!manual.title) return toast.error("Informe um título");
+    setLoading(true);
+    const q = await quizService.createQuiz(manual);
+    toast.success("Quiz criado!");
+    setLoading(false);
+    nav(`/quiz/${q.id}`);
+  };
+
+  const onAI = async () => {
+    if (!aiTopic) return toast.error("Informe um tópico ou texto");
+    setLoading(true);
+    await quizService.generateWithAI(aiTopic);
+    toast.success("Quiz gerado pela IA!");
+    setLoading(false);
+    nav("/my-quizzes");
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl space-y-8">
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-extrabold text-text-white">Create a Quiz</h1>
-        <p className="text-text-dim">Choose how you want to create your new quiz</p>
+    <AppLayout>
+      <div className="mb-6">
+        <h1 className="font-display text-3xl md:text-4xl font-black">Criar Quiz</h1>
+        <p className="text-muted-foreground">Escolha como quer começar.</p>
       </div>
 
-      {/* Method Selection */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {[
-          { id: 'MANUAL', icon: PenTool, title: 'From Scratch', desc: 'Write questions manually' },
-          { id: 'TEMPLATE', icon: LayoutTemplate, title: 'Use Template', desc: 'Start with a preset' },
-          { id: 'AI', icon: Sparkles, title: 'AI Generation', desc: 'Gemini creates it for you', gradient: true }
-        ].map(m => (
-          <button
-            key={m.id}
-            onClick={() => {
-              if (m.id === 'TEMPLATE') navigate('/templates');
-              else setMethod(m.id as any);
-            }}
-            className={`flex flex-col items-center justify-center p-6 rounded-2xl border transition-all ${
-              method === m.id
-                ? m.gradient ? 'border-primary-base bg-primary-base/10 shadow-[0_0_20px_rgba(147,51,234,0.2)]' : 'border-border bg-surface-muted'
-                : 'border-border bg-surface-dark hover:bg-surface-muted'
-            }`}
-          >
-            <m.icon size={32} className={`mb-4 ${m.gradient ? 'text-primary-light' : 'text-text-dim'}`} />
-            <span className="font-bold text-lg">{m.title}</span>
-            <span className="text-sm text-text-dim mt-2">{m.desc}</span>
-          </button>
-        ))}
-      </div>
+      <Tabs defaultValue="manual" className="w-full">
+        <TabsList className="glass">
+          <TabsTrigger value="manual"><PenTool className="h-4 w-4 mr-1.5" /> Manual</TabsTrigger>
+          <TabsTrigger value="template"><LayoutTemplate className="h-4 w-4 mr-1.5" /> Template</TabsTrigger>
+          <TabsTrigger value="ai"><Sparkles className="h-4 w-4 mr-1.5" /> IA</TabsTrigger>
+        </TabsList>
 
-      {method === 'AI' && (
-        <Card className="border-primary-base/30 shadow-[0_0_30px_rgba(147,51,234,0.1)] relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary-base/10 to-transparent pointer-events-none" />
-          <CardContent className="p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <Sparkles className="text-primary-light h-6 w-6" />
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-primary">AI Generator</h2>
+        <TabsContent value="manual" className="mt-6">
+          <form onSubmit={onManual} className="glass-card p-6 max-w-xl space-y-4">
+            <div>
+              <Label htmlFor="title">Título</Label>
+              <Input id="title" value={manual.title} onChange={(e) => setManual({ ...manual, title: e.target.value })} placeholder="Ex.: Revisão de Geometria" />
             </div>
-            
-            <form onSubmit={handleGenerateAI} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-text-dim mb-2">What is the quiz about?</label>
-                <Input 
-                  placeholder="e.g. History of Rome, Quantum Physics..." 
-                  value={aiTopic}
-                  onChange={e => setAiTopic(e.target.value)}
-                  disabled={isGenerating}
-                  required
-                />
+            <div>
+              <Label htmlFor="desc">Descrição</Label>
+              <Textarea id="desc" value={manual.description} onChange={(e) => setManual({ ...manual, description: e.target.value })} placeholder="Para que serve esse quiz?" />
+            </div>
+            <Button type="submit" disabled={loading} className="rounded-full bg-gradient-primary text-primary-foreground shadow-glow">
+              {loading ? "Criando..." : "Criar e adicionar questões"}
+            </Button>
+          </form>
+        </TabsContent>
+
+        <TabsContent value="template" className="mt-6">
+          <div className="glass-card p-8 text-center">
+            <LayoutTemplate className="h-12 w-12 mx-auto mb-3 text-primary" />
+            <p className="font-display font-bold mb-2">Galeria de templates</p>
+            <p className="text-sm text-muted-foreground mb-4">Acesse a página de Templates para escolher uma estrutura pronta.</p>
+            <Button asChild variant="outline" className="rounded-full"><a href="/templates">Ver templates</a></Button>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="ai" className="mt-6">
+          <div className="glass-card p-6 max-w-xl space-y-4 bg-gradient-card relative overflow-hidden">
+            <div className="absolute -top-12 -right-12 h-40 w-40 rounded-full bg-gradient-hero opacity-25 blur-3xl" />
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-4">
+                <Wand2 className="h-5 w-5 text-primary" />
+                <h3 className="font-display font-bold">Geração por IA</h3>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-text-dim mb-2">Difficulty</label>
-                  <select 
-                    className="flex w-full rounded-xl border border-border bg-surface-dark px-4 py-3 text-sm text-text-white focus:ring-2 focus:ring-primary-base outline-none"
-                    value={aiDifficulty}
-                    onChange={e => setAiDifficulty(e.target.value)}
-                    disabled={isGenerating}
-                  >
-                    <option>Easy</option>
-                    <option>Medium</option>
-                    <option>Hard</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-text-dim mb-2">Questions Count</label>
-                  <select 
-                    className="flex w-full rounded-xl border border-border bg-surface-dark px-4 py-3 text-sm text-text-white focus:ring-2 focus:ring-primary-base outline-none"
-                    value={aiQuestions}
-                    onChange={e => setAiQuestions(Number(e.target.value))}
-                    disabled={isGenerating}
-                  >
-                    <option value={5}>5 Questions</option>
-                    <option value={10}>10 Questions</option>
-                    <option value={15}>15 Questions</option>
-                  </select>
-                </div>
-              </div>
-              
-              <Button type="submit" size="lg" className="w-full mt-4" isLoading={isGenerating}>
-                {isGenerating ? 'Generating Quiz...' : 'Generate with Gemini'}
+              <Label htmlFor="topic">Tópico ou texto base</Label>
+              <Textarea id="topic" value={aiTopic} onChange={(e) => setAiTopic(e.target.value)} placeholder="Ex.: Leis de Newton para o ENEM, com foco em aplicações práticas..." className="min-h-32" />
+              <Button onClick={onAI} disabled={loading} className="rounded-full bg-gradient-primary text-primary-foreground shadow-glow mt-4">
+                {loading ? "Gerando..." : "Gerar 10 questões"}
               </Button>
-            </form>
-          </CardContent>
-        </Card>
-      )}
-
-      {method === 'MANUAL' && (
-        <Card>
-          <CardContent className="p-8 space-y-6">
-            <h2 className="text-xl font-bold">Quiz Details</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-text-dim mb-2">Title</label>
-                <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="My Awesome Quiz" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-text-dim mb-2">Description</label>
-                <textarea 
-                  className="flex min-h-[100px] w-full rounded-xl border border-border bg-surface-dark px-4 py-3 text-sm text-text-white focus:ring-2 focus:ring-primary-base outline-none resize-y"
-                  value={description}
-                  onChange={e => setDescription(e.target.value)}
-                  placeholder="What is this quiz about?"
-                />
-              </div>
             </div>
-            
-            <div className="pt-6 border-t border-border">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold">Questions List</h3>
-                <Button variant="secondary" size="sm" type="button">
-                  <Plus size={16} className="mr-1" /> Add Question
-                </Button>
-              </div>
-              <div className="bg-surface-darker rounded-xl p-8 border border-dashed border-white/20 text-center">
-                <p className="text-text-dim">No questions added yet.</p>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-4 pt-4 border-t border-border mt-8">
-              <Button variant="ghost">Cancel</Button>
-              <Button>Save Draft</Button>
-              <Button className="bg-success text-white shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:opacity-90">Publish Quiz</Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </AppLayout>
   );
-}
+};
+export default CreateQuiz;
