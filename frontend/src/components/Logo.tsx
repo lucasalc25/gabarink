@@ -7,7 +7,7 @@ export const Logo = ({ className = "", variant = "default" }: { className?: stri
     <img
       src={variant === "white" ? logoWhiteImg : logoImg}
       alt="Gabarink Logo"
-      className="h-[54px] w-[120px] object-contain m-0 p-0 block"
+      className="h-[50px] w-[120px] object-contain m-0 p-0 block"
     />
   </Link>
 );

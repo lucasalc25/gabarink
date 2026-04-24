@@ -31,7 +31,7 @@ export const UserMenu = () => {
         <div className="lg:hidden">
           <DropdownMenuSeparator className="bg-white/5" />
           {navItems.map((n) => (
-            <DropdownMenuItem key={n.to} asChild className="cursor-pointer font-medium">
+            <DropdownMenuItem key={n.to} asChild className="px-3 py-2.5 cursor-pointer font-medium">
               <Link to={n.to} className="flex items-center w-full">
                 <n.icon className="h-4 w-4 mr-2" /> {n.label}
               </Link>
@@ -40,13 +40,13 @@ export const UserMenu = () => {
         </div>
 
         <DropdownMenuSeparator className="bg-white/5" />
-        <DropdownMenuItem asChild className="cursor-pointer font-medium hover:bg-white/5 focus:bg-white/5"><Link to="/settings" className="flex items-center w-full"><Settings className="h-4 w-4 mr-2" /> Configurações</Link></DropdownMenuItem>
-        <DropdownMenuItem onClick={toggle} className="cursor-pointer font-medium hover:bg-white/5 focus:bg-white/5">
+        <DropdownMenuItem asChild className="px-3 py-2.5 cursor-pointer font-medium hover:bg-white/5 focus:bg-white/5"><Link to="/settings" className="flex items-center w-full"><Settings className="h-4 w-4 mr-2" /> Configurações</Link></DropdownMenuItem>
+        <DropdownMenuItem onClick={toggle} className="px-3 py-2.5 cursor-pointer font-medium hover:bg-white/5 focus:bg-white/5">
           {theme === "dark" ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
           Tema {theme === "dark" ? "claro" : "escuro"}
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-white/5" />
-        <DropdownMenuItem onClick={async () => { await logout(); nav("/"); }} className="text-destructive cursor-pointer font-bold hover:bg-destructive/10 focus:bg-destructive/10">
+        <DropdownMenuItem onClick={async () => { await logout(); nav("/"); }} className="px-3 py-2.5 text-destructive cursor-pointer font-bold hover:bg-destructive/10 focus:bg-destructive/10">
           <LogOut className="h-4 w-4 mr-2" /> Sair
         </DropdownMenuItem>
       </DropdownMenuContent>

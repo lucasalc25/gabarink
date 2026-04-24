@@ -6,15 +6,15 @@ import { UserMenu } from "../shared/UserMenu";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
-import { 
-  Sun, 
-  Moon, 
-  Menu, 
-  Home, 
-  Map, 
-  Swords, 
-  LayoutTemplate, 
-  ShoppingBag 
+import {
+  Sun,
+  Moon,
+  Menu,
+  Home,
+  Map,
+  Swords,
+  LayoutTemplate,
+  ShoppingBag
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -39,7 +39,7 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-40 w-full">
       <div className="glass border-b border-white/5 bg-surface-dark/80 backdrop-blur-xl">
-        <div className="container-custom flex h-20 items-center justify-between gap-4">
+        <div className="container-custom flex h-16 items-center justify-between gap-4">
           <Logo />
 
           {isLogged && (
@@ -49,7 +49,7 @@ export const Header = () => {
                   key={n.to}
                   to={n.to}
                   className={({ isActive }) =>
-                    `px-3 py-2 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-1.5 cursor-pointer ${isActive ? "bg-primary text-white shadow-glow" : "text-muted-foreground hover:text-white hover:bg-white/5"
+                    `px-3 py-2.5 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-1.5 cursor-pointer ${isActive ? "bg-primary text-white shadow-glow" : "text-muted-foreground hover:text-white hover:bg-white/5"
                     }`
                   }
                 >
@@ -66,13 +66,13 @@ export const Header = () => {
                 <div className="hidden md:block">
                   <HeaderStats />
                 </div>
-                
-                <div className="flex items-center gap-1">
+
+                <div className="flex items-center gap-2">
                   <NotificationsBell />
-                  
-                  <button 
-                    onClick={toggle} 
-                    className="h-[34px] w-[34px] glass rounded-full flex items-center justify-center hover:bg-white/10 transition-bounce focus:outline-none border-white/5 cursor-pointer" 
+
+                  <button
+                    onClick={toggle}
+                    className="h-[34px] w-[34px] glass rounded-full flex items-center justify-center hover:bg-white/10 transition-bounce focus:outline-none border-white/5 cursor-pointer"
                     aria-label="Alternar tema"
                   >
                     {theme === "dark" ? <Sun className="h-4 w-4 text-warning" /> : <Moon className="h-4 w-4 text-primary-light" />}
@@ -100,12 +100,12 @@ export const Header = () => {
                       <Menu className="h-5 w-5" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56 glass-card border-white/10 bg-surface-dark/95 backdrop-blur-xl">
-                      <DropdownMenuItem asChild className="cursor-pointer font-bold"><Link to="/login">Entrar</Link></DropdownMenuItem>
-                      <DropdownMenuItem asChild className="cursor-pointer">
+                      <DropdownMenuItem asChild className="px-3 py-2.5 cursor-pointer font-bold"><Link to="/login">Entrar</Link></DropdownMenuItem>
+                      <DropdownMenuItem asChild className="px-3 py-2.5 cursor-pointer">
                         <Link to="/register" className="text-primary font-bold">Começar grátis</Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator className="bg-white/5" />
-                      <DropdownMenuItem onClick={toggle} className="cursor-pointer font-bold">
+                      <DropdownMenuItem onClick={toggle} className="px-3 py-2.5 cursor-pointer font-bold">
                         {theme === "dark" ? <Sun className="h-4 w-4 mr-2 text-warning" /> : <Moon className="h-4 w-4 mr-2 text-primary-light" />}
                         Tema {theme === "dark" ? "claro" : "escuro"}
                       </DropdownMenuItem>

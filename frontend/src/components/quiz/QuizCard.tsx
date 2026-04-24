@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Star, Users, HelpCircle, User } from 'lucide-react';
-import { Card } from '../ui/Card';
+import { Card } from '../ui/card';
 import type { Quiz } from '@/types';
 import { cn } from '@/lib/utils';
 export function QuizCard({ quiz }: { quiz: Quiz }) {

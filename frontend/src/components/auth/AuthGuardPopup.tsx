@@ -24,7 +24,7 @@ export default function AuthGuardPopup() {
 
         <div className="w-full flex flex-col gap-3">
           <Button 
-            variant="danger" 
+            variant="destructive" 
             size="lg" 
             className="w-full font-bold h-14 rounded-2xl shadow-lg shadow-red-500/10 active:scale-95 transition-all text-base"
             onClick={() => {
