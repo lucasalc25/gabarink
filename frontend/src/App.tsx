@@ -39,11 +39,13 @@ const App = () => (
 
               <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
               <Route path="/trail" element={<ProtectedRoute><StudyTrail /></ProtectedRoute>} />
+              <Route path="/trail/quiz/:id" element={<ProtectedRoute><QuizPlayer /></ProtectedRoute>} />
               <Route path="/arena" element={<ProtectedRoute><Arena /></ProtectedRoute>} />
+              <Route path="/arena/quiz/:id" element={<ProtectedRoute><QuizPlayer /></ProtectedRoute>} />
+              <Route path="/arena/dailychallenge" element={<ProtectedRoute><QuizPlayer /></ProtectedRoute>} />
               <Route path="/ranking" element={<ProtectedRoute><Ranking /></ProtectedRoute>} />
               <Route path="/templates" element={<ProtectedRoute><Templates /></ProtectedRoute>} />
               <Route path="/shop" element={<ProtectedRoute><Shop /></ProtectedRoute>} />
-              <Route path="/quiz/:id" element={<ProtectedRoute><QuizPlayer /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
 
               <Route path="*" element={<NotFound />} />

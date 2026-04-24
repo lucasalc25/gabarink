@@ -1,3 +1,8 @@
+import { useNavigate } from "react-router-dom";
+import { BookOpen, Users, Zap, Calculator, Award, PenTool } from "lucide-react";
+import ollieMascot from "@/assets/ollie.png";
+import { cn } from "@/lib/utils";
+
 export default function VisitorHome() {
   const navigate = useNavigate();
 

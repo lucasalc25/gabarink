@@ -9,7 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Flame, Droplet, Trophy, ArrowRight, Sparkles, CheckCircle2, LayoutDashboard } from "lucide-react";
 import type { AreaENEM, DailyMission, Subject } from "@/types";
 import { motion } from "framer-motion";
-import { AreaBadge, getTierByPoints, getRomanByPoints } from "@/components/shared/StatsBadges";
+import { AreaBadge, getTierByPoints } from "@/components/shared/StatsBadges";
 
 const Home = () => {
   const { user } = useAuth();
@@ -79,7 +79,7 @@ const Home = () => {
             </div>
 
             <div className="flex md:flex-col gap-3 shrink-0">
-               <Stat icon={Droplet} label="Gofas de Ink" value={`${user.inkDrops}/${user.maxInkDrops}`} color="text-primary-glow" />
+               <Stat icon={Droplet} label="Gotas de Tinta" value={`${user.inkDrops}/${user.maxInkDrops}`} color="text-primary-glow" />
                <Stat icon={Flame} label="Fogo (Streak)" value={`${user.streak} dias`} color="text-accent" />
                <Stat icon={Trophy} label="Arena Global" value={`${arenaAverage} pts`} color="text-warning" />
             </div>
@@ -91,7 +91,6 @@ const Home = () => {
           {areas.map((area) => {
             const stats = user.stats[area];
             const tier = getTierByPoints(stats?.points || 0);
-            const roman = getRomanByPoints(stats?.points || 0);
             return (
               <div key={area} className="glass-card p-5 border-white/5 hover:border-primary/20 transition-all hover:bg-white/5 group">
                 <div className="flex items-center gap-4">
@@ -99,7 +98,7 @@ const Home = () => {
                    <div>
                       <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{area}</p>
                       <p className="text-lg font-black text-white group-hover:text-primary-light transition-colors">
-                        {tier.name} {roman}
+                        {tier.name}
                       </p>
                       <p className="text-[10px] font-bold text-primary-light/60 uppercase">
                         {stats?.points || 0} Pontos Arena
@@ -122,7 +121,7 @@ const Home = () => {
              </div>
              
              <div className="space-y-3">
-               <Link to="/quiz/3" className="flex items-center justify-between gap-6 p-6 rounded-2xl bg-secondary/20 hover:bg-secondary/40 border border-white/5 transition-all group">
+               <Link to="/trail/quiz/3" className="flex items-center justify-between gap-6 p-6 rounded-2xl bg-secondary/20 hover:bg-secondary/40 border border-white/5 transition-all group">
                  <div className="flex-1 min-w-0">
                     <p className="text-xs font-black text-muted-foreground uppercase mb-1">Matemática · Álgebra</p>
                     <h3 className="text-xl font-bold mb-3 truncate">Equações de 2º Grau</h3>

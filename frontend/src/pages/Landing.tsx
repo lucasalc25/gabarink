@@ -10,7 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 const features = [
   { icon: Map, title: "Trilha de Estudos", desc: "Avance subindo unidades de cada matéria, no seu ritmo." },
   { icon: Trophy, title: "Arena Competitiva", desc: "Simulados cronometrados e ranking semanal por liga." },
-  { icon: Droplet, title: "Sistema de Ink", desc: "5 gotas por dia. Use com sabedoria, ganhe consistência." },
+  { icon: Droplet, title: "Sistema de Tinta", desc: "5 gotas por dia. Use com sabedoria, ganhe consistência." },
   { icon: Sparkles, title: "Quizzes com IA", desc: "Gere questões a partir de um tópico ou texto." },
 ];
 

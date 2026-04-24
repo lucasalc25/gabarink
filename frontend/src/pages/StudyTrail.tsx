@@ -26,7 +26,7 @@ const StudyTrail = () => {
     <AppLayout>
       <div className="mb-6">
         <h1 className="font-display text-3xl md:text-4xl font-black">Trilha de Estudos</h1>
-        <p className="text-muted-foreground">Avance unidade por unidade. Cada quiz custa 1 Ink Drop.</p>
+        <p className="text-muted-foreground">Avance unidade por unidade. Cada quiz custa 1 Gota de Tinta.</p>
       </div>
 
       {/* Subject tabs */}
@@ -79,7 +79,7 @@ const TrailNode = ({ unit, index }: { unit: Unit; index: number; total: number }
       className={cn("relative flex items-center gap-4 py-4", offsets[offset])}
     >
       <Link
-        to={isLocked ? "#" : `/quiz/${unit.id}`}
+        to={isLocked ? "#" : `/trail/quiz/${unit.id}`}
         className={cn(
           "h-20 w-20 rounded-full flex items-center justify-center font-display font-black text-xl shadow-soft transition-bounce flex-shrink-0",
           isDone && "bg-gradient-success text-success-foreground shadow-glow",

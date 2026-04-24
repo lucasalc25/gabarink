@@ -2,7 +2,6 @@ export type AreaENEM = 'MATEMATICA' | 'NATUREZA' | 'HUMANAS' | 'LINGUAGENS';
 
 export interface AreaStats {
   points: number; // Arena Points (0 to 1000+)
-  league: string; // "Ferro I", "Bronze II", etc.
 }
 
 export interface User {

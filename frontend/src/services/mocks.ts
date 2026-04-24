@@ -17,10 +17,10 @@ export const MOCK_USER: User = {
     title: 'Mestre Arcanista',
   },
   stats: {
-    MATEMATICA: { points: 750, league: 'Ouro VII' },
-    NATUREZA: { points: 920, league: 'Diamante V' },
-    HUMANAS: { points: 640, league: 'Ouro IV' },
-    LINGUAGENS: { points: 480, league: 'Prata III' }
+    MATEMATICA: { points: 750 },
+    NATUREZA: { points: 920 },
+    HUMANAS: { points: 640 },
+    LINGUAGENS: { points: 480 }
   },
   arena_points: 2790,
   achievements: [],

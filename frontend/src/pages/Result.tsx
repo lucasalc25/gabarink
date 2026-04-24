@@ -13,51 +13,51 @@ export default function Result() {
         <div className="w-24 h-24 bg-gradient-primary rounded-full flex items-center justify-center mx-auto shadow-[0_0_40px_rgba(147,51,234,0.5)] mb-4 animate-bounce">
           <Trophy size={48} className="text-white" />
         </div>
-        <h1 className="text-4xl font-extrabold text-text-white">Quiz Completed!</h1>
-        <p className="text-text-dim text-lg">You did great. Here's how you performed.</p>
+        <h1 className="text-4xl font-extrabold text-white">Quiz Concluído!</h1>
+        <p className="text-muted-foreground text-lg">Excelente trabalho. Confira seu desempenho abaixo.</p>
       </div>
 
-      <Card className="border-primary-base/20 bg-surface-darker">
+      <Card className="border-primary/20 bg-surface-dark/40 glass">
         <CardContent className="p-8">
           <div className="text-6xl font-black bg-clip-text text-transparent bg-gradient-primary mb-2">
             {score}
           </div>
-          <div className="text-text-dim font-medium uppercase tracking-widest text-sm mb-8">
-            Total Points
+          <div className="text-muted-foreground font-black uppercase tracking-widest text-xs mb-8">
+            Pontos Arena Ganhos
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-surface-dark p-4 rounded-2xl border border-white/5 flex flex-col items-center">
+            <div className="bg-white/5 p-4 rounded-2xl border border-white/5 flex flex-col items-center">
               <Target className="text-success mb-2" />
               <span className="font-bold text-xl">100%</span>
-              <span className="text-xs text-text-dim uppercase">Accuracy</span>
+              <span className="text-[10px] text-muted-foreground font-black uppercase">Precisão</span>
             </div>
-            <div className="bg-surface-dark p-4 rounded-2xl border border-white/5 flex flex-col items-center">
+            <div className="bg-white/5 p-4 rounded-2xl border border-white/5 flex flex-col items-center">
               <Clock className="text-blue-400 mb-2" />
               <span className="font-bold text-xl">5.2s</span>
-              <span className="text-xs text-text-dim uppercase">Avg. Time</span>
+              <span className="text-[10px] text-muted-foreground font-black uppercase">Tempo Médio</span>
             </div>
-            <div className="bg-surface-dark p-4 rounded-2xl border border-white/5 flex flex-col items-center">
-              <Zap className="text-yellow-500 mb-2" />
+            <div className="bg-white/5 p-4 rounded-2xl border border-white/5 flex flex-col items-center">
+              <Zap className="text-warning mb-2" />
               <span className="font-bold text-xl">3</span>
-              <span className="text-xs text-text-dim uppercase">Streak</span>
+              <span className="text-[10px] text-muted-foreground font-black uppercase">Streak</span>
             </div>
           </div>
         </CardContent>
       </Card>
 
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button size="lg" className="flex-1" onClick={() => window.history.back()}>
-          <RotateCcw className="mr-2 h-5 w-5" /> Retry Quiz
+        <Button size="lg" className="flex-1 rounded-2xl font-bold bg-white/5 hover:bg-white/10 border-white/10 text-white" onClick={() => window.history.back()}>
+          <RotateCcw className="mr-2 h-5 w-5" /> Tentar Novamente
         </Button>
         <Link to="/ranking" className="flex-1">
-          <Button variant="secondary" size="lg" className="w-full">
-            <List className="mr-2 h-5 w-5" /> View Ranking
+          <Button size="lg" className="w-full rounded-2xl font-black bg-gradient-primary text-white shadow-glow">
+            <List className="mr-2 h-5 w-5" /> Ver Ranking
           </Button>
         </Link>
-        <Link to="/" className="flex-1">
-          <Button variant="secondary" size="lg" className="w-full text-text-dim hover:text-text-white border-transparent">
-            <Home className="mr-2 h-5 w-5" /> Home
+        <Link to="/home" className="flex-1">
+          <Button variant="ghost" size="lg" className="w-full rounded-2xl font-bold text-muted-foreground hover:text-white">
+            <Home className="mr-2 h-5 w-5" /> Início
           </Button>
         </Link>
       </div>
